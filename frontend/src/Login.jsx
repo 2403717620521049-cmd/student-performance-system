@@ -1,45 +1,54 @@
 import { useState } from "react";
-import axios from "axios";
 
 function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const [email,setEmail]=useState("");
-  const [password,setPassword]=useState("");
-
-  const login=async()=>{
-
-    const res=await axios.post(
+  const handleLogin = async () => {
+    const response = await fetch(
       "http://localhost:5000/api/auth/login",
-      {email,password}
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          email,
+          password
+        })
+      }
     );
 
-    localStorage.setItem(
-      "token",
-      res.data.token
-    );
+    const data = await response.json();
 
-    alert("Login Success");
+    if (data.token) {
+      localStorage.setItem("token", data.token);
+      alert("Login Successful");
+      window.location.reload();
+    } else {
+      alert(data.message);
+    }
   };
 
   return (
-    <>
+    <div>
       <h2>Login</h2>
 
       <input
         placeholder="Email"
-        onChange={(e)=>setEmail(e.target.value)}
+        onChange={(e) => setEmail(e.target.value)}
       />
 
       <input
-        placeholder="Password"
         type="password"
-        onChange={(e)=>setPassword(e.target.value)}
+        placeholder="Password"
+        onChange={(e) => setPassword(e.target.value)}
       />
 
-      <button onClick={login}>
+      <button onClick={handleLogin}>
         Login
       </button>
-    </>
+    </div>
   );
 }
 

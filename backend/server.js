@@ -34,6 +34,20 @@ app.use("/api/students", studentRoutes);
 app.use("/api/auth", authRoutes);
 
 // server start
+const authMiddleware = require("./middleware/authMiddleware");
+
+app.get(
+  "/api/profile",
+  authMiddleware,
+  (req, res) => {
+    res.json({
+      message: "Protected Route Accessed",
+      user: req.user
+    });
+  }
+);
+
+
 app.listen(5000, () => {
   console.log("Server running on port 5000");
 });
